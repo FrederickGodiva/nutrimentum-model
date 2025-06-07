@@ -1,0 +1,9 @@
+# IDE Configurations
+.idea
+.vscode
+
+# Virtual Environment Configuration
+.venv
+
+# Upload Files Directory
+uploads
