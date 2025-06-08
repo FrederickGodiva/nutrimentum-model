@@ -13,7 +13,7 @@ CORS(app)
 class_labels = ['sate', 'mie_goreng', 'bakso', 'sop_buntut', 'martabak_telur', 'rawon', 'nasi_goreng', 'cumi_goreng',
                 'ayam_semur', 'opor_ayam', 'ayam_bakar', 'bubur', 'rendang', 'nasi_uduk', 'iga_bakar', 'telur_rebus',
                 'gado_gado', 'telur_dadar', 'ayam_goreng', 'nasi_tumpeng', 'ikan_goreng', 'gulai_ikan', 'soto']
-# nutrition_data = pd.read_csv("nutritions.csv")
+nutrition_data = pd.read_csv("./data/df_food_exported.csv")
 
 UPLOAD_FOLDER = "uploads"
 if not os.path.exists(UPLOAD_FOLDER):
@@ -31,7 +31,7 @@ def food_image_classification():
         file_path = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(file_path)
 
-        model = load_model("classification-model.keras")
+        model = load_model("./models/classification-model.keras")
 
         img = load_img(file_path, target_size=(299, 299))
         img_array = img_to_array(img) / 255.0
@@ -44,47 +44,56 @@ def food_image_classification():
 
         print(predicted_label)
 
-        # nutrition = nutrition_data[nutrition_data['name'].str.lower().str.strip() == predicted_label.lower().strip()]
-        # if nutrition.empty:
-        #     return jsonify({"error": f"Nutrition data not found for {predicted_label}"}), 404
-        #
-        # nutrition_dict = nutrition.iloc[0].to_dict()
+        normalized_label = predicted_label.replace("_", " ").lower().strip()
+
+        nutrition = nutrition_data[nutrition_data['item'].str.lower(
+        ).str.replace("_", " ").str.strip() == normalized_label]
+
+        if nutrition.empty:
+            return jsonify({"error": f"Nutrition data not found for {predicted_label}"}), 404
+
+        nutrition_dict = nutrition.iloc[0].to_dict()
 
         return jsonify(
-            {"predicted_label": predicted_label, "confidence": float(confidence),  # "nutritions": nutrition_dict
+            {"predicted_label": predicted_label, "confidence": float(confidence),  "nutritions": nutrition_dict
              })
 
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/", methods=["POST"])
 def tes_app():
     return jsonify({"message": "Hello World"})
 
+
 @app.route("/recommendations/content-based", methods=["POST"])
 def food_recommendation():
-    try : 
+    try:
         foodName = request.get_json().get('foodName')
         food_recommendation_system = foodBasedRecommendation()
-        recommendation = food_recommendation_system(foodName = foodName)
+        recommendation = food_recommendation_system(foodName=foodName)
         return recommendation
 
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
-    
+
+
 @app.route("/recommendations/goal-based", methods=["POST"])
 def goal_based_recommendation():
-    try : 
+    try:
         userGoal = request.get_json().get('userGoal')
         food_recommendation_system_based_goal = goalBasedRecommendation()
-        recommendation = food_recommendation_system_based_goal(userGoal = userGoal)
+        recommendation = food_recommendation_system_based_goal(
+            userGoal=userGoal)
         return recommendation
 
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
