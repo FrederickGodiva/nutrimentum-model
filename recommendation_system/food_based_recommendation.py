@@ -25,8 +25,8 @@ class foodBasedRecommendation:
 
     def __call__(self, foodName: str):
         try:
-            nutrients_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_nutrients_df, self.food_data[["item"]])
-            flavor_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_keyword_df, self.food_data[['item', 'flavor_profile']])
+            nutrients_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_nutrients_df, self.food_data)
+            flavor_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_keyword_df, self.food_data)
 
             nutrient_based_recommendation = nutrients_based_recommendation.to_dict(orient="records")
             flavor_based_recommendation = flavor_based_recommendation.to_dict(orient="records")
