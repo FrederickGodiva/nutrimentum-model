@@ -5,6 +5,8 @@ from flask_cors import CORS
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 
+from recommendation_system import foodBasedRecommendation, goalBasedRecommendation
+
 app = Flask(__name__)
 CORS(app)
 
@@ -56,11 +58,33 @@ def food_image_classification():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-@app.route("/recommend", methods=["POST"])
-def food_recommendation():
+@app.route("/", methods=["POST"])
+def tes_app():
     return jsonify({"message": "Hello World"})
 
+@app.route("/recommendations/content-based", methods=["POST"])
+def food_recommendation():
+    try : 
+        foodName = request.get_json().get('foodName')
+        food_recommendation_system = foodBasedRecommendation()
+        recommendation = food_recommendation_system(foodName = foodName)
+        return recommendation
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/recommendations/goal-based", methods=["POST"])
+def goal_based_recommendation():
+    try : 
+        userGoal = request.get_json().get('userGoal')
+        food_recommendation_system_based_goal = goalBasedRecommendation()
+        recommendation = food_recommendation_system_based_goal(userGoal = userGoal)
+        return recommendation
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
