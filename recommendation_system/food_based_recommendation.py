@@ -2,7 +2,7 @@ import pandas as pd
 import joblib
 from flask import jsonify
 
-def recipe_recommendations(foodName, similarity_data, items, k=5):
+def food_recommendations(foodName, similarity_data, items, k=5):
     sim_scores = similarity_data[foodName]
 
     recommendations = (
@@ -25,8 +25,8 @@ class foodBasedRecommendation:
 
     def __call__(self, foodName: str):
         try:
-            nutrients_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_nutrients_df, self.food_data)
-            flavor_based_recommendation = recipe_recommendations(foodName, self.cosine_sim_keyword_df, self.food_data)
+            nutrients_based_recommendation = food_recommendations(foodName, self.cosine_sim_nutrients_df, self.food_data)
+            flavor_based_recommendation = food_recommendations(foodName, self.cosine_sim_keyword_df, self.food_data)
 
             nutrient_based_recommendation = nutrients_based_recommendation.to_dict(orient="records")
             flavor_based_recommendation = flavor_based_recommendation.to_dict(orient="records")
