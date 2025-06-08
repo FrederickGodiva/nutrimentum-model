@@ -19,8 +19,8 @@ def food_recommendations(foodName, similarity_data, items, k=5):
 class foodBasedRecommendation:
         
     def __init__(self):
-        self.cosine_sim_nutrients_df = joblib.load('model/cosine_sim_nutrients_df.joblib')
-        self.cosine_sim_keyword_df = joblib.load('model/cosine_sim_keyword_df.joblib')
+        self.cosine_sim_nutrients_df = joblib.load('models/cosine_sim_nutrients_df.joblib')
+        self.cosine_sim_keyword_df = joblib.load('models/cosine_sim_keyword_df.joblib')
         self.food_data = pd.read_csv("data/df_food_exported.csv")
 
     def __call__(self, foodName: str):

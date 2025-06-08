@@ -41,8 +41,8 @@ def food_recommendations(foodName, similarity_data, items, scaler, k=5):
 class goalBasedRecommendation:
         
     def __init__(self):
-        self.scaler = joblib.load('model/scaler_goals.joblib')
-        self.df_goals = joblib.load('model/df_goals.joblib')
+        self.scaler = joblib.load('models/scaler_goals.joblib')
+        self.df_goals = joblib.load('models/df_goals.joblib')
         self.food_data = pd.read_csv("data/df_food_exported.csv")
 
     def __call__(self, userGoal:list):
