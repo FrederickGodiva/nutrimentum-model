@@ -1,6 +1,6 @@
 import pandas as pd
 import joblib
-from flask import Flask, request, jsonify
+from flask import jsonify
 
 def recipe_recommendations(foodName, similarity_data, items, k=5):
     sim_scores = similarity_data[foodName]
