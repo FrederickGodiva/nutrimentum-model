@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import joblib
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tensorflow.keras.models import load_model
@@ -10,10 +11,32 @@ from recommendation_system import foodBasedRecommendation, goalBasedRecommendati
 app = Flask(__name__)
 CORS(app)
 
-class_labels = ['sate', 'mie_goreng', 'bakso', 'sop_buntut', 'martabak_telur', 'rawon', 'nasi_goreng', 'cumi_goreng',
-                'ayam_semur', 'opor_ayam', 'ayam_bakar', 'bubur', 'rendang', 'nasi_uduk', 'iga_bakar', 'telur_rebus',
-                'gado_gado', 'telur_dadar', 'ayam_goreng', 'nasi_tumpeng', 'ikan_goreng', 'gulai_ikan', 'soto']
+scaler = joblib.load("models/scaler_nutrients.joblib")
+
+class_labels = ['ayam_bakar', 'ayam_goreng', 'ayam_semur', 'bakso', 'bubur', 'cumi_goreng', 'gado_gado', 'gulai_ikan', 'iga_bakar', 'ikan_goreng', 'martabak_telur', 'mie_goreng', 'nasi_goreng', 'nasi_tumpeng', 'nasi_uduk', 'opor_ayam', 'rawon', 'rendang', 'sate', 'sop_buntut', 'soto', 'telur_dadar', 'telur_rebus']
+
 nutrition_data = pd.read_csv("./data/df_food_exported.csv")
+
+nutrients_cols = ['kalori',
+    'protein',
+    'lemak',
+    'karbohidrat',
+    'Cholesterol_g',
+    'saturated_fat_g',
+    'fiber_g',
+    'sugars_g',
+    'sodium_mg',
+    'iron_mg',
+    'zinc_mg',
+    'calcium_mg',
+    'vitamin_b12_mcg',
+    'vitamin_a_mcg',
+    'vitamin_b_mcg',
+    'vitamin_c_mcg',
+    'vitamin_d_mcg',
+    'vitamin_e_mcg']
+
+nutrition_data[nutrients_cols] = scaler.inverse_transform(nutrition_data[nutrients_cols])
 
 UPLOAD_FOLDER = "uploads"
 if not os.path.exists(UPLOAD_FOLDER):
